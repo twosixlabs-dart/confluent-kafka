@@ -1,0 +1,3 @@
+#!/bin/bash
+
+kafka-acls --bootstrap-server localhost:9092 --list
