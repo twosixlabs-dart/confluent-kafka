@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+function show-usage {
+  cat << EOF
+usage: kafka-list-consumer-groups.sh [options...]
+  [--group]   Group name
+EOF
+}
+
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+  --group) GROUP=$2; shift 2;;
+  --show-usage) show-usage
+                return 0;;
+  *)
+    echo "ERROR unknown parameter: $1"
+    show-usage
+    exit 1
+  esac
+done
+
+if [[ -n $GROUP ]]; then
+  CMD="kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group $GROUP --offsets"
+else
+  CMD="kafka-consumer-groups --bootstrap-server localhost:9092 --describe --all-groups"
+fi
+eval "$CMD"

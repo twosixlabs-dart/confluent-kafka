@@ -1,0 +1,36 @@
+#!/bin/bash
+
+PRINT_KEY=true
+PRINT_VALUE=false
+
+function show_usage {
+  cat << EOF
+usage: kafka-print-messages [options...]
+  --topic       Topic name
+  [--print-key] Whether to print message key or not (true/false)
+  [--print-value] Whether to print message value or not (true/false)
+  [--show-usage] Whether to show usage
+EOF
+}
+
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+  --topic) TOPIC=$2; shift 2;;
+	--print-key) PRINT_KEY=$2; shift 2;;
+	--print-value) PRINT_VALUE=$2; shift 2;;
+  --show-usage) show_usage
+              return 0;;
+    *)
+      echo "ERROR unknown parameter: $1"
+      show_usage
+      exit 1
+  esac
+done
+
+if [ -z $TOPIC ]; then
+    echo "topic cannot be empty"
+    show_usage
+    exit 1
+fi
+
+kafka-console-consumer --bootstrap-server localhost:9092 --topic $TOPIC --from-beginning --property print.key=$PRINT_KEY --property print.value=$PRINT_VALUE  --property key.separator=:

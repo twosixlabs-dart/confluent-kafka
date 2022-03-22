@@ -1,0 +1,13 @@
+#!/bin/bash
+TOPIC=$1
+
+if [ -z $TOPIC ]; then
+    echo "topic cannot be empty"
+    exit 1
+fi
+
+COUNT=$(kafka-run-class kafka.tools.GetOffsetShell --broker-list localhost:9092  --topic $TOPIC --time -1 | while IFS=: read topic_name partition_id number; do echo "$number"; done | paste -sd+ - | bc)
+
+if [[ -n $COUNT ]]; then
+  echo "$TOPIC has $COUNT messages"
+fi
